@@ -9,35 +9,42 @@ trekanthlp a = [unwords(replicate x "*") | x <- [1..a]]
 trekant2 :: Int -> IO ()
 trekant2 a = putStr (unlines (trekanthlp2 a)) 
 
-trekanthlp2 a = [replicate (a-x) ' ' ++ unwords(replicate x "*") ++ replicate (a-x) ' ' | x <- [1..a]] --legge til replicate bak og
+trekanthlp2 a = [replicate (a-x) ' ' ++ unwords(replicate x "*") ++ replicate (a-x+1) ' ' | x <- [1..a]] --legge til replicate bak og
 
 --C
-trekanter :: Int -> Int -> Int -> IO ()
-trekanter x y z = putStr (unlines (stringA x y z (maks x y z)))
+--trekanter :: Int -> Int -> Int -> IO ()
+--trekanter x y z = putStr (unlines (stringA x y z (maks x y z)))
+--trekanter x y z = putStr (unlines (trekanterNy x y z))
 
-stringA x y z d = if( d /= 0) 
-    then [replicate d ' ' ++ unwords(replicate (x-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (y-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (z-(d-1)) "*") ++ replicate d ' '] ++ stringA x y z (d-1)
-    else []
+--stringA x y z d = if( d /= 0) 
+--    then [replicate d ' ' ++ unwords(replicate (x-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (y-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (z-(d-1)) "*") ++ replicate d ' '] ++ stringA x y z (d-1)
+--    else []
     
-trekanterNy :: Int -> Int -> Int -> IO ()
-trekanterNy x y z = do
-        let xN = trekanthlp2 x 
-        let yN = trekanthlp2 y 
-        let zN = trekanthlp2 z 
+replicater x n t= replicate x (replicate (n*2) ' ') ++ t
 
-        let maksimum = max(map length[xN, yN, zN])
+trekanter :: Int -> Int -> Int -> IO ()
+trekanter x y z = do
+        let maks = max x (max y z)
 
+        let xN = replicater (maks - x) x (trekanthlp2 x)
+        let yN = replicater (maks - y) y (trekanthlp2 y)
+        let zN = replicater (maks - z) z (trekanthlp2 z)
+
+        let listeT = [(xN !! a) ++ (yN !! a) ++ (zN !! a) | a <- [0 .. (maks-1)]]
         
+        mapM putStrLn listeT
+
         return ()
---stringA x y z d     | x >= y && x >= z && y>=z  && d /= 0 = [replicate d ' ' ++ unwords(replicate (x-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (y-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (z-(d-1)) "*") ++ replicate d ' '] ++ stringA x y z (d-1)
---                    | x < y && x < z && d /= 0 = [replicate d ' ' ++ unwords(replicate (x-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (y-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (z-(d-1)) "*") ++ replicate d ' '] ++ stringA x y z (d-1)
---                    | otherwise = [replicate d ' ' ++ unwords(replicate (x-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (y-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (z-(d-1)) "*") ++ replicate d ' '] ++ stringA x y z (d-1)
+
+{-        
+stringA x y z d     | x >= y && x >= z && y>=z  && d /= 0 = [replicate d ' ' ++ unwords(replicate (x-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (y-(d-1)) "*")  ++ replicate d ' ' ++ replicate d ' ' ++ unwords(replicate (z-(d-1)) "*") ++ replicate d ' '] ++ stringA x y z (d-1)
+                    | d /= 0 = [replicate ( x + x + 1 ) ' '] 
+                    | otherwise = []
+
 
 maks x y z = max x (max y z)
 
-trekanthlp3 a b c= [(trekanthlp2 a),(trekanthlp2 b),(trekanthlp2 c)]
-
-
+-}
 --D
 data FileOrFolder = File Int | Folder [ FileOrFolder ]
 prettyPrint :: FileOrFolder -> IO () 
